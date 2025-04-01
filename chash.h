@@ -36,4 +36,7 @@ uint32_t jenkins_one_at_a_time_hash(const char *key);
 // Inserts or updates a key-data pair in the hash table
 void insert_record(const char *name, uint32_t salary);
 
+// Deletes a key-data pair in the hash table
+void_record(const char *name);
+
 #endif // CHASH_H
