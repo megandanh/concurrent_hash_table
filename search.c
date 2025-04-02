@@ -34,10 +34,10 @@ hashRecord* search(const char* key) {
   if(waiting == 1){
     printf("%ld: SEARCH AWAKENED\n", now);
   }
-  printf("%ld: READ LOCK ACQUIRED", now);
+  printf("%ld,READ LOCK ACQUIRED", now);
   lock_acquisitions++;
   
-  //Search through hash table 
+  //Search through hash table and return current key-data pair if found
   while (current != NULL){
     if(current->hash == hash){
       //Unlock read lock
@@ -48,8 +48,8 @@ hashRecord* search(const char* key) {
     current = current->next;
   }
 
-  //Unlock read lock
-  printf("%ld: READ LOCK RELEASED", now);
+  //If not found, Unlock read lock and return NULL
+  printf("%ld,READ LOCK RELEASED", now);
   pthread_rwlock_unlock(rwlock);
   lock_releases++;
   return NULL;
