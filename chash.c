@@ -25,6 +25,8 @@ void *handle_command(void *args) {
     CommandArgs *cmd = (CommandArgs *)args;
     if (strcmp(cmd->command, "insert") == 0) {
         insert_record(cmd->name, cmd->salary);
+    } else if (strcmp(cmd->command, "delete" == 0)) {
+        delete(cmd->name);
     }
     // If your role were expanded, you could add else if branches for delete/search etc.
     return NULL;

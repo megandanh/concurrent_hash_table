@@ -40,6 +40,6 @@ void insert_record(const char *name, uint32_t salary);
 void delete(const char *key);
 
 //Searches for key-data pair and returns value if found or NULL if not found
-hashRecord* void search(const char *key);
+hashRecord* search(const char *key);
 
 #endif // CHASH_H
