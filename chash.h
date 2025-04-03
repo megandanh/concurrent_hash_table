@@ -30,6 +30,9 @@ extern int lock_releases;
 
 // Function Prototypes
 
+// Utility: Log event function
+void log_event(const char *format, ...);
+
 // Utility: Jenkins's one-at-a-time hash function
 uint32_t jenkins_one_at_a_time_hash(const char *key);
 

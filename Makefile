@@ -1,9 +1,10 @@
 CC = gcc
 CFLAGS = -pthread -Wall -g
-OBJS = chash.o insert.o utils.o
+LDFLAGS = -pthread
+OBJS = chash.o insert.o delete.o utils.o
 
 chash: $(OBJS)
-	$(CC) -o chash $(OBJS) $(CFLAGS)
+	$(CC) -o chash $(OBJS) $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

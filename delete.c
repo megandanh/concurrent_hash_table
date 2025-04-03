@@ -10,14 +10,14 @@ void delete(const char *key) {
     int waiting = 0;
     while (pthread_rwlock_wrlock(&rwlock) != 0) {
         waiting = 1;
-        printf("%ld: WAITING ON INSERTS\n", time(NULL));
+        log_event("%ld: WAITING ON INSERTS\n", time(NULL));
         pthread_cond_wait(&cv_insert_done, &cv_mutex);
     }
 
     if (waiting == 1) {
-        printf("%ld: DELETE AWAKENED\n", time(NULL));
+        log_event("%ld: DELETE AWAKENED\n", time(NULL));
     }
-    printf("%ld,WRITE LOCK ACQUIRED", time(NULL));
+    log_event("%ld,WRITE LOCK ACQUIRED", time(NULL));
     lock_acquisitions++;
 
     hashRecord *prev = NULL;
@@ -42,7 +42,7 @@ void delete(const char *key) {
 
         log_event("%ld,DELETE,%s,%u", time(NULL), name, salary);
 
-        free(current->name);
+        //free(current->name);
         free(current);
     }
 
