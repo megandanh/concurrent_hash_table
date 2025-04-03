@@ -97,6 +97,8 @@ int main(void) {
         pthread_join(threads[i], NULL);
     }
 
+    print();
+
     // Free memory, and close file
     pthread_rwlock_destroy(&rwlock);
     pthread_mutex_destroy(&cv_mutex);

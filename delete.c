@@ -10,13 +10,20 @@ void delete(const char *key) {
     int waiting = 0;
     while (pthread_rwlock_wrlock(&rwlock) != 0) {
         waiting = 1;
-        log_event("%ld: WAITING ON INSERTS\n", time(NULL));
+
+        pthread_mutex_lock(&cv_mutex);
+
+        log_event("%ld: WAITING ON INSERTS", time(NULL));
+
         pthread_cond_wait(&cv_insert_done, &cv_mutex);
+
+        pthread_mutex_unlock(&cv_mutex);
     }
 
     if (waiting == 1) {
-        log_event("%ld: DELETE AWAKENED\n", time(NULL));
+        log_event("%ld: DELETE AWAKENED", time(NULL));
     }
+    
     log_event("%ld,WRITE LOCK ACQUIRED", time(NULL));
     lock_acquisitions++;
 
