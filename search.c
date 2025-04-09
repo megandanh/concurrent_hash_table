@@ -1,4 +1,4 @@
-#include "hash.h"
+#include "chash.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,11 +24,11 @@ hashRecord* search(const char* key) {
   int waiting = 0;
   time_t now = time(NULL);
   //If lock not acquired, print timestamp and what is waiting for
-  while(pthread_rwlock_rdlock(rwlock) != 0){
+  while(pthread_rwlock_rdlock(&rwlock) != 0){
     waiting = 1;
     //print timestamp & wait
     printf("%ld: WAITING ON INSERTS\n", now);
-    pthread_cond_wait(&cv_insert_done, cv_mutex);
+    pthread_cond_wait(&cv_insert_done, &cv_mutex);
   }
   //If thread has ever waited, state that it is now awakened
   if(waiting == 1){
@@ -36,12 +36,13 @@ hashRecord* search(const char* key) {
   }
   printf("%ld,READ LOCK ACQUIRED", now);
   lock_acquisitions++;
+  hashRecord *current = head;
   
   //Search through hash table and return current key-data pair if found
   while (current != NULL){
     if(current->hash == hash){
       //Unlock read lock
-      pthread_rwlock_unlock(rwlock);
+      pthread_rwlock_unlock(&rwlock);
       lock_releases++;
       return current;
     }
@@ -50,7 +51,7 @@ hashRecord* search(const char* key) {
 
   //If not found, Unlock read lock and return NULL
   printf("%ld,READ LOCK RELEASED", now);
-  pthread_rwlock_unlock(rwlock);
+  pthread_rwlock_unlock(&rwlock);
   lock_releases++;
   return NULL;
 }
