@@ -41,5 +41,7 @@ void print() {
 
     for (int i = 0; i < len; i++) {
         log_event("%u,%s,%u", list[i]->hash, list[i]->name, list[i]->salary);
+        free(list[i]);
     }
+    free(list);
 }
