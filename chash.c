@@ -28,7 +28,15 @@ void *handle_command(void *args) {
     } else if (strcmp(cmd->command, "delete") == 0) {
         delete(cmd->name);
     } else if (strcmp(cmd->command, "search") == 0){
-        search(cmd->name);
+        hashRecord * result = search(cmd->name);
+        time_t now = time(NULL);
+        if(result == NULL){
+            log_event("%ld,SEARCH: No Record Found\n", now);
+        }
+        else
+        {
+            log_event("%ld,SEARCH:%s,%u", now, result->name, result->salary);
+        }
     }
     // If your role were expanded, you could add else if branches for delete/search etc.
     return NULL;
