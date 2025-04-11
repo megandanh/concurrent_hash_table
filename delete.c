@@ -24,7 +24,7 @@ void delete(const char *key) {
         log_event("%ld: DELETE AWAKENED", time(NULL));
     }
     
-    log_event("%ld,WRITE LOCK ACQUIRED\n", time(NULL));
+    log_event("%ld,WRITE LOCK ACQUIRED", time(NULL));
     lock_acquisitions++;
 
     hashRecord *prev = NULL;

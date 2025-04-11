@@ -27,12 +27,12 @@ hashRecord* search(const char* key) {
   while(pthread_rwlock_rdlock(&rwlock) != 0){
     waiting = 1;
     //print timestamp & wait
-    log_event("%ld: WAITING ON INSERTS\n", now);
+    log_event("%ld: WAITING ON INSERTS", now);
     pthread_cond_wait(&cv_insert_done, &cv_mutex);
   }
   //If thread has ever waited, state that it is now awakened
   if(waiting == 1){
-    log_event("%ld: SEARCH AWAKENED\n", now);
+    log_event("%ld: SEARCH AWAKENED", now);
   }
   log_event("%ld,READ LOCK ACQUIRED", now);
   lock_acquisitions++;
@@ -48,6 +48,14 @@ hashRecord* search(const char* key) {
       return current;
     }
     current = current->next;
+  }
+
+  if(current == NULL){
+      log_event("%ld,SEARCH: NOT FOUND", now);
+  }
+  else
+  {
+      log_event("%ld,SEARCH:%s,%u", now, current->name, current->salary);
   }
 
   //If not found, Unlock read lock and return NULL

@@ -8,12 +8,11 @@ void insert_record(const char *name, uint32_t salary) {
     // Compute hash using Jenkins's one-at-a-time hash function
     uint32_t hash_val = jenkins_one_at_a_time_hash(name);
 
-    // Log before acquiring the write lock
-    log_event("%ld,WRITE LOCK ACQUIRED\n", time(NULL));
-
     // Acquire the write lock to modify the hash table
     pthread_rwlock_wrlock(&rwlock);
     lock_acquisitions++;
+
+    log_event("%ld,WRITE LOCK ACQUIRED", time(NULL));
 
     // Search for an existing record with the same name (and hash)
     hashRecord *curr = head;
@@ -23,10 +22,10 @@ void insert_record(const char *name, uint32_t salary) {
         if (curr->hash == hash_val && strcmp(curr->name, name) == 0) {
             // If found, update the salary
             curr->salary = salary;
-            log_event("%ld,INSERT,%s,%u\n", time(NULL), name, salary);
+            log_event("%ld,INSERT,%s,%u", time(NULL), name, salary);
             pthread_rwlock_unlock(&rwlock);
             lock_releases++;
-            log_event("%ld,WRITE LOCK RELEASED\n", time(NULL));
+            log_event("%ld,WRITE LOCK RELEASED", time(NULL));
             return;
         }
 
@@ -56,10 +55,10 @@ void insert_record(const char *name, uint32_t salary) {
     head = newRecord;
 
     // Log the insert command
-    log_event("%ld,INSERT,%s,%u\n", time(NULL), name, salary);
+    log_event("%ld,INSERT,%s,%u", time(NULL), name, salary);
 
     // Release the write lock
     pthread_rwlock_unlock(&rwlock);
     lock_releases++;
-    log_event("%ld,WRITE LOCK RELEASED\n", time(NULL));
+    log_event("%ld,WRITE LOCK RELEASED", time(NULL));
 }
