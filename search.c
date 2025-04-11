@@ -4,20 +4,6 @@
 #include <string.h>
 #include <time.h>
 
-// Reader-writer lock for synchronizing access to the hash table
-extern pthread_rwlock_t rwlock;
-
-// Head of the linked list (the hash table)
-extern hashRecord *head;
-
-// Global counters for lock acquisition 
-extern int lock_acquisitions;
-extern int lock_releases;
-
-// Mutex and condition variable for coordinating thread execution 
-extern pthread_mutex_t cv_mutex;
-extern pthread_cond_t cv_insert_done;
-
 hashRecord* search(const char* key) {
   //Create hash value
   uint32_t hash = jenkins_one_at_a_time_hash(key);
