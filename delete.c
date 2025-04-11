@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 #include "chash.h"
 
 void delete(const char *key) {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+
+    char timestamp[64];
+    snprintf(timestamp, sizeof(timestamp), "%ld%05d", tv.tv_sec, tv.tv_usec);
+
     uint32_t hash = jenkins_one_at_a_time_hash(key);
 
     int waiting = 0;
@@ -13,7 +19,7 @@ void delete(const char *key) {
 
         pthread_mutex_lock(&cv_mutex);
 
-        log_event("%ld: WAITING ON INSERTS", time(NULL));
+        log_event("%s: WAITING ON INSERTS", timestamp);
 
         pthread_cond_wait(&cv_insert_done, &cv_mutex);
 
@@ -21,10 +27,9 @@ void delete(const char *key) {
     }
 
     if (waiting == 1) {
-        log_event("%ld: DELETE AWAKENED", time(NULL));
+        log_event("%s: DELETE AWAKENED", timestamp);
     }
-    
-    log_event("%ld,WRITE LOCK ACQUIRED", time(NULL));
+    log_event("%s,WRITE LOCK ACQUIRED", timestamp);
     lock_acquisitions++;
 
     hashRecord *prev = NULL;
@@ -47,13 +52,12 @@ void delete(const char *key) {
         char *name = current->name;
         uint32_t salary = current->salary;
 
-        log_event("%ld,DELETE,%s,%u", time(NULL), name, salary);
+        log_event("%s,DELETE,%s,%u", timestamp, name, salary);
 
-        //free(current->name);
         free(current);
     }
 
-    pthread_rwlock_unlock(&rwlock);
     lock_releases++;
-    log_event("%ld,WRITE LOCK RELEASED", time(NULL));
+    log_event("%s,WRITE LOCK RELEASED", timestamp);
+    pthread_rwlock_unlock(&rwlock);
 }

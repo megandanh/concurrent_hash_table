@@ -15,14 +15,12 @@ FILE *output_file = NULL;
 
 // Structure to pass parameters to each thread
 typedef struct {
-    char command[10];  // Expecting "insert" (other commands might be here too)
+    char command[10];
     char name[50];
     uint32_t salary;
 } CommandArgs;
 
-
-
-// Thread function to handle commands (only insert in your case)
+// Thread function to handle commands
 void *handle_command(void *args) {
     CommandArgs *cmd = (CommandArgs *)args;
     if (strcmp(cmd->command, "insert") == 0) {
@@ -32,7 +30,6 @@ void *handle_command(void *args) {
     } else if (strcmp(cmd->command, "search") == 0){
         search(cmd->name);
     }
-    // If your role were expanded, you could add else if branches for delete/search etc.
     return NULL;
 }
 
@@ -68,7 +65,7 @@ int main(void) {
 
     // Log that we're running threads
     log_event("Running %d threads", threadCount);
-    log_event("WAITING ON INSERTS");
+    //log_event("WAITING ON INSERTS");
 
     // Allocate arrays for thread handles and command arguments
     pthread_t *threads = malloc(threadCount * sizeof(pthread_t));
@@ -78,7 +75,7 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    // Read each command (assuming they are all "insert" for your part)
+    // Read each command
     int index = 0;
     while (fgets(line, sizeof(line), cmdFile) != NULL && index < threadCount) {
         // For an insert command: "insert,Name,Salary"
@@ -92,7 +89,7 @@ int main(void) {
     }
     fclose(cmdFile);
 
-    // Create threads to process each insert command
+    // Create threads to process each command
     for (int i = 0; i < threadCount; i++) {
         if (pthread_create(&threads[i], NULL, handle_command, (void *)&commands[i]) != 0) {
             perror("pthread_create failed");
@@ -102,7 +99,7 @@ int main(void) {
 
     // Wait for all threads to complete
     for (int i = 0; i < threadCount; i++) {
-        pthread_join(threads[i], NULL);
+        pthread_join(threads[i], NULL);   
     }
 
     print();
