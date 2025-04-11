@@ -5,13 +5,14 @@
 #include "chash.h"
 
 void insert_record(const char *name, uint32_t salary) {
-    // Compute hash using Jenkins's one-at-a-time hash function
+    
+    // Find hash using Jenkins's one-at-a-time hash function
     uint32_t hash_val = jenkins_one_at_a_time_hash(name);
 
     // Log before acquiring the write lock
     log_event("%ld,WRITE LOCK ACQUIRED\n", time(NULL));
 
-    // Acquire the write lock to modify the hash table
+    // Get lock then increment acquisition count
     pthread_rwlock_wrlock(&rwlock);
     lock_acquisitions++;
 
