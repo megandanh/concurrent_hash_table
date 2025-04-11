@@ -20,6 +20,8 @@ typedef struct {
     uint32_t salary;
 } CommandArgs;
 
+
+
 // Thread function to handle commands (only insert in your case)
 void *handle_command(void *args) {
     CommandArgs *cmd = (CommandArgs *)args;
@@ -31,7 +33,7 @@ void *handle_command(void *args) {
         hashRecord * result = search(cmd->name);
         time_t now = time(NULL);
         if(result == NULL){
-            log_event("%ld,SEARCH: No Record Found\n", now);
+            log_event("%ld,SEARCH: No Record Found", now);
         }
         else
         {
@@ -71,6 +73,10 @@ int main(void) {
         fprintf(stderr, "commands.txt is empty or formatted incorrectly.\n");
         exit(EXIT_FAILURE);
     }
+
+    // Log that we're running threads
+    log_event("Running %d threads", threadCount);
+    log_event("WAITING ON INSERTS");
 
     // Allocate arrays for thread handles and command arguments
     pthread_t *threads = malloc(threadCount * sizeof(pthread_t));

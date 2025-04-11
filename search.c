@@ -44,6 +44,7 @@ hashRecord* search(const char* key) {
       //Unlock read lock
       pthread_rwlock_unlock(&rwlock);
       lock_releases++;
+      log_event("%ld,READ LOCK RELEASED", now);
       return current;
     }
     current = current->next;
