@@ -5,22 +5,20 @@
 #include "chash.h"
 
 void insert_record(const char *name, uint32_t salary) {
-    // Compute hash using Jenkins's one-at-a-time hash function
+    // Find hash 
     uint32_t hash_val = jenkins_one_at_a_time_hash(name);
 
-    // Acquire the write lock to modify the hash table
     pthread_rwlock_wrlock(&rwlock);
     lock_acquisitions++;
 
     log_event("%ld,WRITE LOCK ACQUIRED", time(NULL));
 
-    // Search for an existing record with the same name (and hash)
+    // Loop to find a pre-existing record with the same name 
     hashRecord *curr = head;
-
-    // Loop through linked list to search for name 
     while (curr != NULL) {
+        // If found
         if (curr->hash == hash_val && strcmp(curr->name, name) == 0) {
-            // If found, update the salary
+            // Update the salary
             curr->salary = salary;
             log_event("%ld,INSERT,%s,%u", time(NULL), name, salary);
             pthread_rwlock_unlock(&rwlock);
@@ -44,17 +42,14 @@ void insert_record(const char *name, uint32_t salary) {
         return;
     }
 
-    // Set values for node
+    // Set up new node
     newRecord->hash = hash_val;
     strncpy(newRecord->name, name, sizeof(newRecord->name) - 1);
     newRecord->name[sizeof(newRecord->name) - 1] = '\0';  // Ensure null-termination
     newRecord->salary = salary;
-    
-    // Insert new node at the beginning of the list
     newRecord->next = head;
     head = newRecord;
 
-    // Log the insert command
     log_event("%ld,INSERT,%s,%u", time(NULL), name, salary);
 
     // Release the write lock
