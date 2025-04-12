@@ -33,7 +33,7 @@ hashRecord* search(const char* key) {
   //Search through hash table and return current key-data pair if found
   while (current != NULL){
     if(current->hash == hash){
-      log_event("%s,SEARCH:%s,%u", timestamp, current->name, current->salary);
+      log_event("%s, SEARCH:%s, %u", timestamp, current->name, current->salary);
       //Unlock read lock
       lock_releases++;
       log_event("%s,READ LOCK RELEASED", timestamp);
@@ -44,7 +44,7 @@ hashRecord* search(const char* key) {
   }
 
   if(current == NULL){
-      log_event("%s,SEARCH: NOT FOUND", timestamp);
+      log_event("%s, SEARCH: NOT FOUND", timestamp);
   }
 
   //If not found, Unlock read lock and return NULL
